@@ -24,12 +24,10 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_TOKEN }}
 
-      - name: Build, tag, and push image to Registry
-        env:
-          REGISTRY_ID: ${{ secrets.REGISTRY_ID }}
-          IMAGE_NAME: ${{ github.repository }}
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $REGISTRY_PATH/$IMAGE_NAME:$IMAGE_TAG .
-          docker tag $IMAGE_NAME:$IMAGE_TAG $REGISTRY_PATH/$IMAGE_NAME:$IMAGE_TAG
-          docker push $REGISTRY_PATH/$IMAGE_NAME:$IMAGE_TAG
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.REGISTRY_PATH }}/${{ github.repository  }}:${{ github.sha  }}
