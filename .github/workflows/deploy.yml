@@ -8,7 +8,7 @@ on:
       - master
 
 env:
-  REGISTRY_PATH: cr.yandex
+  REGISTRY_PATH: 019c87fc-wild-cetus.registry.twcstorage.ru
 
 jobs:
   build:
@@ -17,14 +17,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Login to Yandex Cloud Container Registry
-        uses: yc-actions/yc-cr-login@v2
+      - name: Login to Registry
+        uses: docker/login-action@v3
         with:
-          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
 
-      - name: Build, tag, and push image to Yandex Cloud Container Registry
+      - name: Build, tag, and push image to Registry
         env:
-          REGISTRY_ID: ${{ secrets.YC_CONTAINER_REGISTRY_ID }}
+          REGISTRY_ID: ${{ secrets.REGISTRY_ID }}
           IMAGE_NAME: ${{ github.repository }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
