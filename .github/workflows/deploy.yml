@@ -20,6 +20,7 @@ jobs:
       - name: Login to Registry
         uses: docker/login-action@v3
         with:
+          registry: 019c87fc-wild-cetus.registry.twcstorage.ru
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_TOKEN }}
 
