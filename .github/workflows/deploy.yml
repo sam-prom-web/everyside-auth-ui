@@ -1,0 +1,31 @@
+name: Build and Push to Container Registry
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+env:
+  REGISTRY_PATH: cr.yandex
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Yandex Cloud Container Registry
+        uses: yc-actions/yc-cr-login@v2
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+
+      - name: Build, tag, and push image to Yandex Cloud Container Registry
+        env:
+          REGISTRY_ID: ${{ secrets.YC_CONTAINER_REGISTRY_ID }}
+          IMAGE_NAME: ${{ github.repository }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY_PATH/$REGISTRY_ID/$IMAGE_NAME:$IMAGE_TAG .
+          docker push $REGISTRY_PATH/$REGISTRY_ID/$IMAGE_NAME:$IMAGE_TAG
