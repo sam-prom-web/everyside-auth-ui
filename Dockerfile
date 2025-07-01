@@ -15,6 +15,7 @@ RUN npm ci --fetch-timeout=600000
 COPY . /usr/src/app
 
 RUN if [ "$LINK" == "true" ]; then (cd ./contrib/sdk/generated; rm -rf node_modules; npm ci; npm run build); \
+    mkdir -p node_modules/@ory/kratos-client/; \
     cp -r ./contrib/sdk/generated/* node_modules/@ory/kratos-client/; \
     fi
 

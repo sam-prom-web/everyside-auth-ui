@@ -15,7 +15,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: app
+
+      - name: Checkout ory/kratos
+        uses: actions/checkout@v4
+        with:
+          repository: ory/kratos
+          path: kratos
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Build SDK
+        working-directory: ${{ github.workspace }}/app
+        env: 
+          KRATOS_DIR: ${{ github.workspace }}/kratos
+        run: make build-sdk
 
       - name: Login to Registry
         uses: docker/login-action@v3
@@ -29,5 +54,7 @@ jobs:
         with:
           context: .
           push: true
+          build-args: |
+            LINK=true
           tags: |
             ${{ env.REGISTRY_PATH }}/${{ github.repository  }}:${{ github.sha  }}
